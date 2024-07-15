@@ -53,9 +53,29 @@ async def generate_answers(
             model="llama3-70b-8192",
         )
         output = chat_completion.choices[0].message.content
+        # Split the input string into lines
+        lines = output.strip().split('\n')
+
+        # Assign each line to a standalone variable
+        option1 = lines[0]
+        option2 = lines[1]
+        option3 = lines[2]
+        option4 = lines[3]
+        option5 = lines[4]
+
+        # Print the variables to verify
+        print(option1)
+        print(option2)
+        print(option3)
+        print(option4)
+        print(option5)
 
         result = {
-            "generated_answers": output
+            "option1" : option1,
+            "option2" : option2,
+            "option3" : option3,
+            "option4" : option4,
+            "option5" : option5,
         }
 
         return result
