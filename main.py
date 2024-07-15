@@ -82,13 +82,22 @@ async def check_grammar(
     try:
         gf = Gramformer(models=1, use_gpu=False)  # 1=corrector, 2=detector
 
-        result = {
-            "grammar": gf.correct(question)
-        }
+        corrections = gf.correct(question)
+        correction = list(corrections)[0]
+
+        if correction == question:
+            return {
+                "grammar": ""
+            }
+
+        else:
+            result = {
+                "grammar": correction
+            }
         return result
     except RequestValidationError as e:
         raise HTTPException(status_code=400, detail="Invalid request format")
     except ValidationError as e:
         raise HTTPException(status_code=422, detail="Invalid input or the input criteria is not matched")
     except Exception as e:
-        raise HTTPException(status_code=500, detail="Internal server error")
+        raise HTTPException(status_code=500, detail="Error in processing")
