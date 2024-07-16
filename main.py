@@ -25,8 +25,6 @@ async def generate_answers(
 ):
     if question is None:
         raise HTTPException(status_code=400, detail="Missing question")
-    if question is not str:
-        raise HTTPException(status_code=401, detail="Wrong format for input")
     try:
         chat_completion = client.chat.completions.create(
             messages=[
@@ -101,8 +99,6 @@ async def check_grammar(
 ):
     if question is None:
         raise HTTPException(status_code=400, detail="Missing question")
-    if question is not str:
-        raise HTTPException(status_code=401, detail="Wrong format for input")
     try:
         gf = Gramformer(models=1, use_gpu=False)  # 1=corrector, 2=detector
 
