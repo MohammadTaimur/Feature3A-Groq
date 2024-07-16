@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 import os
 import torch
 from gramformer import Gramformer
-from fastapi import FastAPI, HTTPException, Form, ValidationError, RequestValidationError
+from fastapi import FastAPI, HTTPException, Form
 
 load_dotenv()
 
@@ -23,6 +23,10 @@ app = FastAPI()
 async def generate_answers(
         question: str = Form(None)
 ):
+    if question is None:
+        raise HTTPException(status_code=400, detail="Missing question")
+    if question is not str:
+        raise HTTPException(status_code=401, detail="Wrong format for input")
     try:
         chat_completion = client.chat.completions.create(
             messages=[
@@ -79,10 +83,6 @@ async def generate_answers(
         }
 
         return result
-    except RequestValidationError as e:
-        raise HTTPException(status_code=400, detail="Invalid request format")
-    except ValidationError as e:
-        raise HTTPException(status_code=422, detail="Invalid input or the input criteria is not matched")
     except Exception as e:
         raise HTTPException(status_code=500, detail="Internal server error")
 # lines = output.splitlines()
@@ -99,6 +99,10 @@ set_seed(1212)
 async def check_grammar(
         question: str = Form(None)
 ):
+    if question is None:
+        raise HTTPException(status_code=400, detail="Missing question")
+    if question is not str:
+        raise HTTPException(status_code=401, detail="Wrong format for input")
     try:
         gf = Gramformer(models=1, use_gpu=False)  # 1=corrector, 2=detector
 
@@ -115,9 +119,5 @@ async def check_grammar(
                 "grammar": correction
             }
         return result
-    except RequestValidationError as e:
-        raise HTTPException(status_code=400, detail="Invalid request format")
-    except ValidationError as e:
-        raise HTTPException(status_code=422, detail="Invalid input or the input criteria is not matched")
     except Exception as e:
         raise HTTPException(status_code=500, detail="Error in processing")
